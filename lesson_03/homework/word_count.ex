@@ -1,5 +1,4 @@
 defmodule WordCount do
-
   @doc """
   Count number of lines, words and symbols for a given file,
   returns tuple {num_lines, num_words, num_symbols}
@@ -11,17 +10,19 @@ defmodule WordCount do
     end
   end
 
-
-  @doc ~S"""
+  @doc """
   Count number of lines, words and symbols for a given string,
   returns tuple {num_lines, num_words, num_symbols}
 
   ## Example
-  iex> WordCount.count("hello here\nand there")
-  {2, 4, 20}
+      iex> WordCount.count("hello here\nand there")
+      {2, 4, 20}
   """
   def count(data) do
-    # TODO add your implementation
+    {
+      data |> String.split("\n") |> length(),
+      data |> String.split() |> length(),
+      data |> String.codepoints() |> length()
+    }
   end
-
 end
