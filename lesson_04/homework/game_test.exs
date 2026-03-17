@@ -15,29 +15,29 @@ defmodule Test do
 
   test "move_allowed? test" do
     assert move_allowed?(:white, {:pawn, :white})
-    assert not move_allowed?(:black, {:pawn, :white})
     assert move_allowed?(:white, {:rock, :white})
-    assert not move_allowed?(:black, {:rock, :white})
-    assert not move_allowed?(:white, {:queen, :white})
-    assert not move_allowed?(:black, {:queen, :white})
+
+    refute move_allowed?(:black, {:pawn, :white})
+    refute move_allowed?(:black, {:rock, :white})
+    refute move_allowed?(:white, {:queen, :white})
+    refute move_allowed?(:black, {:queen, :white})
   end
 
   test "single_win? test" do
     assert single_win?(true, false)
     assert single_win?(false, true)
-    assert not single_win?(true, true)
-    assert not single_win?(false, false)
+    refute single_win?(true, true)
+    refute single_win?(false, false)
   end
 
   test "double_win? test" do
     assert :ab == double_win?(true, true, false)
     assert :bc == double_win?(false, true, true)
     assert :ac == double_win?(true, false, true)
-    assert not double_win?(true, true, true)
-    assert not double_win?(false, false, false)
-    assert not double_win?(true, false, false)
-    assert not double_win?(false, true, false)
-    assert not double_win?(false, false, true)
+    refute double_win?(true, true, true)
+    refute double_win?(false, false, false)
+    refute double_win?(true, false, false)
+    refute double_win?(false, true, false)
+    refute double_win?(false, false, true)
   end
-
 end

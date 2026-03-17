@@ -12,20 +12,20 @@ defmodule Test do
   end
 
   test "valid_game? negative test" do
-    assert not valid_game?({{:x, :o, :some}, {:f, :x, :o}, {:o, :o, :x}})
-    assert not valid_game?({{:x, :x, :x}, {:x, :some, :x}, {:x, :x, :x}})
-    assert not valid_game?({{:o, :o, :o}, {:o, :o, :o}, {:o, :o, :some}})
+    refute valid_game?({{:x, :o, :some}, {:f, :x, :o}, {:o, :o, :x}})
+    refute valid_game?({{:x, :x, :x}, {:x, :some, :x}, {:x, :x, :x}})
+    refute valid_game?({{:o, :o, :o}, {:o, :o, :o}, {:o, :o, :some}})
 
-    assert not valid_game?({{:x, :o, :f}, {:f, :x, :o}, {:o, :o, :x, :x}})
-    assert not valid_game?({{:x, :o, :f}, {:f, :x, :x, :o}, {:o, :o, :x}})
-    assert not valid_game?({{:x, :o, :x, :f}, {:f, :x, :o}, {:o, :o, :x}})
+    refute valid_game?({{:x, :o, :f}, {:f, :x, :o}, {:o, :o, :x, :x}})
+    refute valid_game?({{:x, :o, :f}, {:f, :x, :x, :o}, {:o, :o, :x}})
+    refute valid_game?({{:x, :o, :x, :f}, {:f, :x, :o}, {:o, :o, :x}})
 
-    assert not valid_game?({{:x, :o, :f}, {:f, :x, :o}, {:o, :o}})
-    assert not valid_game?({{:x, :o, :f}, {:f, :o}, {:o, :o, :x}})
-    assert not valid_game?({{:x, :o}, {:f, :x, :o}, {:o, :o, :x}})
+    refute valid_game?({{:x, :o, :f}, {:f, :x, :o}, {:o, :o}})
+    refute valid_game?({{:x, :o, :f}, {:f, :o}, {:o, :o, :x}})
+    refute valid_game?({{:x, :o}, {:f, :x, :o}, {:o, :o, :x}})
 
-    assert not valid_game?({{:x, :o, :f}, {:f, :x, :o}, {:o, :o, :x}, {:x, :x, :x}})
-    assert not valid_game?({{:x, :o, :f}, {:f, :x, :o}})
+    refute valid_game?({{:x, :o, :f}, {:f, :x, :o}, {:o, :o, :x}, {:x, :x, :x}})
+    refute valid_game?({{:x, :o, :f}, {:f, :x, :o}})
   end
 
   test "check_who_win test" do
@@ -43,5 +43,4 @@ defmodule Test do
     assert :no_win == check_who_win({{:x, :f, :f}, {:f, :x, :x}, {:f, :f, :o}})
     assert :no_win == check_who_win({{:x, :o, :o}, {:o, :x, :x}, {:x, :o, :o}})
   end
-
 end
