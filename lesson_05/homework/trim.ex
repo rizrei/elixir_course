@@ -1,5 +1,4 @@
 defmodule Trim do
-
   # We only trim space character
   def is_space(char), do: char == 32
 
@@ -17,9 +16,9 @@ defmodule Trim do
     # We iterate string 4 times here
     str
     |> trim_left
-    |> Enum.reverse
+    |> Enum.reverse()
     |> trim_left
-    |> Enum.reverse
+    |> Enum.reverse()
   end
 
   def trim(str) when is_binary(str) do
@@ -30,8 +29,8 @@ defmodule Trim do
     |> to_string
   end
 
-
   defp trim_left([]), do: []
+
   defp trim_left([head | tail] = str) do
     if is_space(head) do
       trim_left(tail)
@@ -40,10 +39,19 @@ defmodule Trim do
     end
   end
 
-
-  def effective_trim(str) do
-    # Lets trim string with less than 4 iterations
-    # TODO add your implementation
+  def effective_trim(str) when is_list(str) do
+    do_trim(str, [], :left)
   end
 
+  def effective_trim(str) when is_binary(str) do
+    str
+    |> to_charlist()
+    |> effective_trim()
+    |> to_string()
+  end
+
+  def do_trim([], acc, :right), do: acc
+  def do_trim([], acc, :left), do: do_trim(acc, [], :right)
+  def do_trim([32 | t], [], mode), do: do_trim(t, [], mode)
+  def do_trim([h | t], acc, mode), do: do_trim(t, [h | acc], mode)
 end
