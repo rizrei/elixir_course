@@ -1,9 +1,18 @@
 defmodule WorldChamp do
+  @type champ() :: [team()]
+  @type team() :: {:team, String.t(), [player()]}
+  @type player() :: {:player, String.t(), player_age(), player_rating(), player_health()}
 
+  @type player_age() :: pos_integer()
+  @type player_rating() :: pos_integer()
+  @type player_health() :: pos_integer()
+
+  @spec sample_champ() :: champ()
   def sample_champ() do
     [
       {
-        :team, "Crazy Bulls",
+        :team,
+        "Crazy Bulls",
         [
           {:player, "Big Bull", 22, 545, 99},
           {:player, "Small Bull", 18, 324, 95},
@@ -16,7 +25,8 @@ defmodule WorldChamp do
         ]
       },
       {
-        :team, "Cool Horses",
+        :team,
+        "Cool Horses",
         [
           {:player, "Lazy Horse", 21, 423, 80},
           {:player, "Sleepy Horse", 23, 101, 35},
@@ -29,7 +39,8 @@ defmodule WorldChamp do
         ]
       },
       {
-        :team, "Fast Cows",
+        :team,
+        "Fast Cows",
         [
           {:player, "Flash Cow", 18, 56, 34},
           {:player, "Cow Bow", 28, 89, 90},
@@ -42,7 +53,8 @@ defmodule WorldChamp do
         ]
       },
       {
-        :team, "Fury Hens",
+        :team,
+        "Fury Hens",
         [
           {:player, "Ben The Hen", 57, 403, 83},
           {:player, "Hen Hen", 20, 301, 56},
@@ -55,7 +67,8 @@ defmodule WorldChamp do
         ]
       },
       {
-        :team, "Extinct Monsters",
+        :team,
+        "Extinct Monsters",
         [
           {:player, "T-Rex", 21, 999, 99},
           {:player, "Velociraptor", 29, 656, 99},
@@ -70,18 +83,48 @@ defmodule WorldChamp do
     ]
   end
 
-
+  @spec get_stat(champ()) :: {integer(), integer(), number(), number()}
   def get_stat(champ) do
-    # TODO add your implementation
+    players = Enum.flat_map(champ, fn {:team, _, players} -> players end)
+
+    {count, total_age, total_rating} =
+      Enum.reduce(players, {0, 0, 0}, fn {:player, _, age, rating, _}, {c, a, r} ->
+        {c + 1, a + age, r + rating}
+      end)
+
+    {
+      length(champ),
+      count,
+      total_age / count,
+      total_rating / count
+    }
   end
 
+  @player_min_health 50
+  @team_min_players_count 5
 
+  @spec examine_champ(champ()) :: champ()
   def examine_champ(champ) do
-    # TODO add your implementation
+    champ
+    |> Enum.map(fn {:team, name, players} ->
+      {:team, name, Enum.filter(players, &players_health_filter/1)}
+    end)
+    |> Enum.filter(fn {:team, _, players} -> length(players) >= @team_min_players_count end)
   end
 
-  def make_pairs(team1, team2) do
-    # TODO add your implementation
-  end
+  defp players_health_filter({:player, _, _, _, health}) when health < @player_min_health,
+    do: false
 
+  defp players_health_filter(_), do: true
+
+  @pair_min_rating 600
+
+  @spec make_pairs(team(), term()) :: [{String.t(), String.t()}]
+  def make_pairs({:team, _, t1_players}, {:team, _, t2_players}) do
+    for {:player, p1_name, _, p1_rating, _} <- t1_players,
+        {:player, p2_name, _, p2_rating, _} <- t2_players,
+        p1_rating + p2_rating > @pair_min_rating do
+      {p1_name, p2_name}
+    end
+  end
 end
