@@ -1,5 +1,4 @@
 defmodule MyList do
-
   @doc """
   Function takes a list that may contain any number of sublists,
   which themselves may contain sublists, to any depth.
@@ -10,17 +9,15 @@ defmodule MyList do
   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   """
   def flatten([]), do: []
-
   def flatten([head | tail]), do: flatten(head) ++ flatten(tail)
-
   def flatten(item), do: [item]
-
 
   # ++ operator is not very effective.
   # It would be better to provide a more effective implementation,
   # which is possible, but a little bit tricky.
-  def flatten_e(list) do
-    # TODO add your implementation
-  end
+  def flatten_e(list), do: list |> flatten_e([]) |> Enum.reverse()
 
+  defp flatten_e([], acc), do: acc
+  defp flatten_e([h | t], acc) when is_list(h), do: flatten_e(t, flatten_e(h, acc))
+  defp flatten_e([h | t], acc), do: flatten_e(t, [h | acc])
 end
