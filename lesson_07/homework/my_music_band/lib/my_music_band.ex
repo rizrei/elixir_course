@@ -1,2 +1,0 @@
-defmodule MyMusicBand do
-end

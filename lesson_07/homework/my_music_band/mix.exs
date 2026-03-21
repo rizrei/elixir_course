@@ -5,7 +5,7 @@ defmodule MyMusicBand.MixProject do
     [
       app: :my_music_band,
       version: "0.1.0",
-      elixir: "~> 1.18",
+      elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -19,7 +19,8 @@ defmodule MyMusicBand.MixProject do
 
   defp deps do
     [
-      {:dialyxir, "~> 1.4", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
+      {:credo, "~> 1.7", only: [:dev], runtime: false}
     ]
   end
 end
