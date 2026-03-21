@@ -22,6 +22,11 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 custom_exceptions-*.tar
 
+# Temporary files, for example, from tests.
+/tmp/
 
-# Temporary files for e.g. tests
-/tmp
+# ElixirLS
+.elixir_ls/
+
+.DS_Store
+**/.DS_Store
