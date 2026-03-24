@@ -1,7 +1,11 @@
 defmodule WorkReport do
   @moduledoc """
-  # Analyze report file and gather work statistics
+  Analyze report file and gather work statistics
   """
+
+  alias WorkReport.{Formatter}
+  alias WorkReport.Report.{Month, Day, Task}
+  alias WorkReport.Parser
 
   @name "Work Report"
   @version "1.0.0"
@@ -11,26 +15,96 @@ defmodule WorkReport do
     case OptionParser.parse(args, options()) do
       {[help: true], [], []} -> help()
       {[version: true], [], []} -> version()
-      {params, [file], []} -> do_report(Map.new(params), file)
+      {params, [file_path], []} -> do_report(file_path, Map.new(params))
       _ -> help()
     end
   end
 
-  def options do
-    [
-      strict: [day: :integer, month: :integer, version: :boolean, help: :boolean],
-      aliases: [d: :day, m: :month, v: :version, h: :help]
-    ]
+  def parse_file(file_path, target_month_number, target_day_number) do
+    state = %{
+      target_month_number: target_month_number,
+      target_month: nil,
+      target_day_number: target_day_number,
+      target_day: nil,
+      entity: nil,
+      error: nil
+    }
+
+    File.stream!(file_path)
+    |> Stream.map(&String.trim/1)
+    |> Stream.reject(&(&1 == ""))
+    |> Enum.reduce_while(state, &reducer/2)
+    |> case do
+      %{target_day: %Day{} = day, target_month: %Month{} = month} ->
+        {:ok, month, day}
+
+      %{target_month: nil} ->
+        {:error, "Month #{target_month_number} is not found"}
+
+      %{target_day: nil} ->
+        {:error, "Day #{target_day_number} is not found in month #{target_month_number}"}
+
+      %{error: error} when error != nil ->
+        {:error, error}
+
+      _ ->
+        {:error, :report_not_found}
+    end
   end
 
-  def do_report(params, _file) do
-    _month = Map.get(params, :month, :erlang.date() |> elem(1))
-    _day = Map.get(params, :day, :erlang.date() |> elem(2))
+  def reducer(str, acc) do
+    acc
+    |> Map.put(:entity, Parser.parse(str))
+    |> case do
+      %{entity: %Month{number: number} = month, target_month: nil, target_month_number: number} ->
+        {:cont, %{acc | target_month: month}}
 
-    # TODO your implementation here
+      %{
+        entity: %Day{number: number} = day,
+        target_month: %Month{} = month,
+        target_day_number: number
+      } ->
+        {:cont, %{acc | target_day: day, target_month: %{month | days: [day | month.days]}}}
+
+      %{entity: %Day{} = day, target_month: %Month{} = month} ->
+        {:cont, %{acc | target_month: %{month | days: [day | month.days]}}}
+
+      %{entity: %Task{} = task, target_day: day, target_month: %Month{days: [day | days]} = month} ->
+        day = Day.add_task(day, task)
+        {:cont, %{acc | target_day: day, target_month: %{month | days: [day | days]}}}
+
+      %{entity: %Task{} = task, target_month: %Month{days: [day | days]} = month} ->
+        day = Day.add_task(day, task)
+        {:cont, %{acc | target_month: %{month | days: [day | days]}}}
+
+      %{entity: error} when is_atom(error) ->
+        {:halt, %{acc | error: error}}
+
+      %{entity: %Month{}, target_month: %Month{number: number}, target_month_number: number} ->
+        {:halt, acc}
+
+      _ ->
+        {:cont, acc}
+    end
   end
 
-  def help() do
+  defp do_report(file_path, params) do
+    month = Map.get(params, :month, Date.utc_today().month)
+    day = Map.get(params, :day, Date.utc_today().day)
+
+    with :ok <- validate_month(month),
+         {:ok, month, day} <- parse_file(file_path, month, day) do
+      day |> Formatter.format_day_report() |> IO.puts()
+      month |> Formatter.format_month_report() |> IO.puts()
+    else
+      {:error, reason} -> IO.puts(reason)
+    end
+  end
+
+  defp validate_month(month) when month >= 1 and month <= 12, do: :ok
+  defp validate_month(month), do: {:error, "Month must be between 1 and 12, got: #{month}"}
+
+  defp help() do
     IO.puts("""
     USAGE:
         work_report [OPTIONS] <path/to/report.md>
@@ -42,8 +116,12 @@ defmodule WorkReport do
     """)
   end
 
-  def version() do
-    IO.puts(@name <> " v" <> @version)
-  end
+  defp version(), do: IO.puts(@name <> " v" <> @version)
 
+  defp options do
+    [
+      strict: [day: :integer, month: :integer, version: :boolean, help: :boolean],
+      aliases: [d: :day, m: :month, v: :version, h: :help]
+    ]
+  end
 end

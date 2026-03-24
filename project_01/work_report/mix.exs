@@ -5,7 +5,7 @@ defmodule WorkReport.MixProject do
     [
       app: :work_report,
       version: "0.1.0",
-      elixir: "~> 1.15",
+      elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       escript: [main_module: WorkReport, app: nil]
@@ -20,7 +20,8 @@ defmodule WorkReport.MixProject do
 
   defp deps do
     [
-      {:dialyxir, "~> 1.4", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
+      {:credo, "~> 1.7", only: [:dev], runtime: false}
     ]
   end
 end
