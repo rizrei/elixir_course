@@ -1,7 +1,7 @@
 defmodule IntegrationTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
-  setup do
+  setup_all do
     {_, 0} = System.cmd("mix", ["escript.build"])
     :ok
   end
@@ -35,9 +35,7 @@ defmodule IntegrationTest do
     call_and_check_response(["--version"], "response-version")
   end
 
-  defp get_report_path(report_name) do
-    File.cwd!() |> Path.join("test/sample/#{report_name}.md")
-  end
+  defp get_report_path(report_name), do: "test/sample/#{report_name}.md"
 
   defp call_and_check_response(args, response_name) do
     {:ok, curr_dir} = File.cwd()

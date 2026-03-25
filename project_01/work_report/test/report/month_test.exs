@@ -1,9 +1,7 @@
 defmodule WorkReport.Report.MonthTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
-  alias WorkReport.Report.Month
-  alias WorkReport.Report.Day
-  alias WorkReport.Report.Task
+  alias WorkReport.Report.{Month, Day, Task}
 
   describe "new/1" do
     test "creates a new month with valid English month name" do
