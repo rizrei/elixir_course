@@ -1,8 +1,7 @@
 defmodule WorkReport.Report.DayTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
-  alias WorkReport.Report.Day
-  alias WorkReport.Report.Task
+  alias WorkReport.Report.{Day, Task}
 
   describe "add_task/2" do
     test "adds a task to an empty day" do

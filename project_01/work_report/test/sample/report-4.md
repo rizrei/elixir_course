@@ -1,7 +1,10 @@
 # May
 
 ## 3 mon
-invalid line
+[DEV] Review Pull Requests - 27m
+[COMM] Daily Meeting - 15m
+[DEV] Implement filters for Logstash - 39m
+[DEV] Implement filters for Logstash - 57m
 [OPS] Setup Elasticsearch - 39m
 [OPS] Setup Kibana - 17m
 [DEV] Learn how to search for logs in Kibana - 34m

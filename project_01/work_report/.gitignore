@@ -30,3 +30,4 @@ work_report-*.tar
 work_report
 
 .DS_Store
+.github
