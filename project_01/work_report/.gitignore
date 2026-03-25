@@ -28,3 +28,5 @@ work_report-*.tar
 
 # escript binary
 work_report
+
+.DS_Store
