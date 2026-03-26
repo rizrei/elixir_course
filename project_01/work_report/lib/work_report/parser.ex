@@ -3,7 +3,7 @@ defmodule WorkReport.Parser do
   Parses lines of the report file and extracts entities: months, days and tasks.
   """
 
-  alias WorkReport.Report.{Month, Day, Task}
+  alias WorkReport.Report.{Day, Month, Task}
 
   @month_regex ~r/# (?<month>[A-Za-z]+)/
   @day_regex ~r/## (?<day>\d+) (?<name>.+)/

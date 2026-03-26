@@ -3,7 +3,7 @@ defmodule WorkReport.Report.MonthTest do
 
   use ExUnit.Case, async: true
 
-  alias WorkReport.Report.{Month, Day, Task}
+  alias WorkReport.Report.{Day, Month, Task}
 
   def create_month(name) do
     {:ok, month} = Month.new(name)

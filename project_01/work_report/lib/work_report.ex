@@ -30,7 +30,7 @@ defmodule WorkReport do
     end
   end
 
-  defp help() do
+  defp help do
     IO.puts("""
     USAGE:
         work_report [OPTIONS] <path/to/report.md>
@@ -42,7 +42,7 @@ defmodule WorkReport do
     """)
   end
 
-  defp version(), do: IO.puts(@name <> " v" <> @version)
+  defp version, do: IO.puts(@name <> " v" <> @version)
 
   defp options do
     [

@@ -10,8 +10,8 @@ defmodule WorkReport.State do
   file_path - path to the report file
   """
 
-  alias WorkReport.Report.{Month, Day, Task}
   alias WorkReport.Parser
+  alias WorkReport.Report.{Day, Month, Task}
 
   @type entity() :: Month.t() | Day.t() | Task.t()
   @type t :: %__MODULE__{
