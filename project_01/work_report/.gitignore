@@ -26,8 +26,5 @@ work_report-*.tar
 # Temporary files for e.g. tests
 /tmp
 
-# escript binary
-work_report
-
 .DS_Store
 .github
