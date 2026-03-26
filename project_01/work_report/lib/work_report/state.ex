@@ -70,7 +70,7 @@ defmodule WorkReport.State do
   defp parse_str(state, str) do
     case Parser.parse(str) do
       {:ok, entity} -> %{state | e: entity}
-      {:error, error} -> %{state | e: nil, error: error}
+      {:error, error} -> %{state | error: error}
     end
   end
 

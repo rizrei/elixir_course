@@ -26,5 +26,6 @@ work_report-*.tar
 # Temporary files for e.g. tests
 /tmp
 
+/work_report
 .DS_Store
 .github

@@ -63,4 +63,36 @@ defmodule WorkReport.Report.Month do
       minutes_by_category: minutes_by_category(month_report)
     }
   end
+
+  defimpl WorkReport.Protocols.Reportable do
+    @moduledoc """
+    Implementation of the Reportable protocol for the Month struct.
+    """
+
+    alias WorkReport.Report.{Month, Task}
+
+    import WorkReport.Formatter, only: [format_time: 1]
+
+    @spec report(Month.t()) :: String.t()
+    def report(month_report) do
+      %{
+        total_minutes: total_minutes,
+        days_count: days_count,
+        avg_minutes_by_day: avg_minutes_by_day,
+        minutes_by_category: minutes_by_category
+      } = Month.stats(month_report)
+
+      categories_str =
+        Task.categories()
+        |> Enum.map_join("\n", fn category ->
+          " - #{category}: #{minutes_by_category |> Map.get(category, 0) |> format_time()}"
+        end)
+
+      """
+      Month: #{month_report.name}
+      #{categories_str}
+         Total: #{format_time(total_minutes)}, Days: #{days_count}, Avg: #{format_time(avg_minutes_by_day)}
+      """
+    end
+  end
 end
