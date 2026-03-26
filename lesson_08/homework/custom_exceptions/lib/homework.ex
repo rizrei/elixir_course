@@ -29,36 +29,50 @@ defmodule Homework do
   """
 
   @spec get_from_list!([any()], integer()) :: any() | no_return()
-  def get_from_list!(list, index) when index < 0 or index >= length(list) do
-    raise IndexOutOfBoundsError, {list, index}
+  def get_from_list!(list, index) do
+    case do_get_from_list(list, index) do
+      {:ok, list} -> list
+      {:error, error} -> raise error
+    end
   end
 
-  def get_from_list!(list, index), do: Enum.at(list, index)
-
-  @spec get_from_list([any()], integer()) :: {:ok, any()} | {:error, String.t()}
-  def get_from_list(list, index) when index < 0 or index >= length(list) do
-    {:error, "index #{index} is out of bounds [0-#{length(list)})"}
+  def get_from_list(list, index) do
+    case do_get_from_list(list, index) do
+      {:ok, list} -> {:ok, list}
+      {:error, error} -> {:error, IndexOutOfBoundsError.message(error)}
+    end
   end
-
-  def get_from_list(list, index), do: {:ok, Enum.at(list, index)}
 
   @spec get_many_from_list!([any()], [integer()]) :: [any()] | no_return()
   def get_many_from_list!(list, indices) do
-    len = length(list)
-
-    case Enum.filter(indices, fn i -> i < 0 or i >= len end) do
-      [] -> Enum.map(indices, fn i -> Enum.at(list, i) end)
-      [index | _] -> raise IndexOutOfBoundsError, {list, index}
+    case do_get_many_from_list(list, indices) do
+      {:ok, list} -> list
+      {:error, error} -> raise error
     end
   end
 
   @spec get_many_from_list([any()], [integer()]) :: {:ok, [any()]} | {:error, String.t()}
   def get_many_from_list(list, indices) do
-    len = length(list)
-
-    case Enum.filter(indices, fn i -> i < 0 or i >= len end) do
-      [] -> {:ok, Enum.map(indices, fn i -> Enum.at(list, i) end)}
-      [index | _] -> {:error, "index #{index} is out of bounds [0-#{length(list)})"}
+    case do_get_many_from_list(list, indices) do
+      {:ok, list} -> {:ok, list}
+      {:error, error} -> {:error, IndexOutOfBoundsError.message(error)}
     end
+  end
+
+  defp do_get_from_list(list, index) when index < 0 or index >= length(list) do
+    {:error, IndexOutOfBoundsError.exception({list, index})}
+  end
+
+  defp do_get_from_list(list, index), do: {:ok, Enum.at(list, index)}
+
+  defp do_get_many_from_list(list, indices) do
+    dict = Stream.iterate(0, &(&1 + 1)) |> Enum.zip(list) |> Enum.into(%{})
+
+    indices
+    |> Enum.reverse()
+    |> Enum.reduce_while({:ok, []}, fn
+      i, {:ok, list} when is_map_key(dict, i) -> {:cont, {:ok, [dict[i] | list]}}
+      i, _acc -> {:halt, {:error, IndexOutOfBoundsError.exception({Map.values(dict), i})}}
+    end)
   end
 end
