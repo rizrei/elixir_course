@@ -3,8 +3,9 @@ defmodule WorkReport do
   Analyze report file and gather work statistics
   """
 
-  alias WorkReport.Formatter
   alias WorkReport.State
+
+  import WorkReport.Protocols.Reportable, only: [report: 1]
 
   @name "Work Report"
   @version "1.0.0"
@@ -23,14 +24,13 @@ defmodule WorkReport do
     with %State{} = state <- State.new(file_path, params),
          :ok <- State.validate(state),
          {:ok, month, day} <- State.parse(state) do
-      day |> Formatter.format_day_report() |> IO.puts()
-      month |> Formatter.format_month_report() |> IO.puts()
+      Enum.each([day, month], &(&1 |> report() |> IO.puts()))
     else
       {:error, reason} -> IO.puts(reason)
     end
   end
 
-  defp help() do
+  defp help do
     IO.puts("""
     USAGE:
         work_report [OPTIONS] <path/to/report.md>
@@ -42,7 +42,7 @@ defmodule WorkReport do
     """)
   end
 
-  defp version(), do: IO.puts(@name <> " v" <> @version)
+  defp version, do: IO.puts(@name <> " v" <> @version)
 
   defp options do
     [

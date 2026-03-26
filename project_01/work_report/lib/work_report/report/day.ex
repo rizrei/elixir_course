@@ -32,4 +32,29 @@ defmodule WorkReport.Report.Day do
       Map.update(acc, task.category, task.minutes, fn minutes -> minutes + task.minutes end)
     end)
   end
+
+  defimpl WorkReport.Protocols.Reportable do
+    @moduledoc """
+    Implementation of the Reportable protocol for the Day struct.
+    """
+
+    alias WorkReport.Report.Day
+    import WorkReport.Formatter, only: [format_time: 1]
+
+    @spec report(Day.t()) :: String.t()
+    def report(%Day{number: number, name: name, tasks: tasks} = day) do
+      tasks_str =
+        tasks
+        |> Enum.sort_by(& &1.position)
+        |> Enum.map_join("\n", fn task ->
+          " - #{task.category}: #{task.description} - #{format_time(task.minutes)}"
+        end)
+
+      """
+      Day: #{number} #{name}
+      #{tasks_str}
+         Total: #{day |> Day.total_minutes() |> format_time()}
+      """
+    end
+  end
 end

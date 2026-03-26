@@ -3,7 +3,7 @@ defmodule WorkReport.Parser do
   Parses lines of the report file and extracts entities: months, days and tasks.
   """
 
-  alias WorkReport.Report.{Month, Day, Task}
+  alias WorkReport.Report.{Day, Month, Task}
 
   @month_regex ~r/# (?<month>[A-Za-z]+)/
   @day_regex ~r/## (?<day>\d+) (?<name>.+)/
@@ -72,7 +72,7 @@ defmodule WorkReport.Parser do
 
   defp build_task_attributes(captures) do
     captures
-    |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+    |> Map.new(fn {k, v} -> {String.to_existing_atom(k), v} end)
     |> Map.update!(:hours, &parse_integer/1)
     |> Map.update!(:minutes, &parse_integer/1)
     |> then(&%{&1 | minutes: &1.minutes + &1.hours * 60})

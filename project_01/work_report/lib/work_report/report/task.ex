@@ -23,5 +23,5 @@ defmodule WorkReport.Report.Task do
   def new(attributes), do: {:ok, struct(__MODULE__, attributes)}
 
   @spec categories() :: [String.t()]
-  def categories(), do: @categories
+  def categories, do: @categories
 end

@@ -41,11 +41,9 @@ defmodule IntegrationTest do
     {:ok, curr_dir} = File.cwd()
     work_report_script = Path.join(curr_dir, "work_report")
 
-    {response, exit_status} = System.cmd(work_report_script, args)
-    assert exit_status == 0
+    assert {response, 0} = System.cmd(work_report_script, args)
 
-    {:ok, expected_response} =
-      Path.join(curr_dir, "test/sample/#{response_name}.md") |> File.read()
+    {:ok, expected_response} = File.read("test/sample/#{response_name}.md")
 
     assert response == expected_response
   end

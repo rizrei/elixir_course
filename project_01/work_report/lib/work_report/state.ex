@@ -10,8 +10,8 @@ defmodule WorkReport.State do
   file_path - path to the report file
   """
 
-  alias WorkReport.Report.{Month, Day, Task}
   alias WorkReport.Parser
+  alias WorkReport.Report.{Day, Month, Task}
 
   @type entity() :: Month.t() | Day.t() | Task.t()
   @type t :: %__MODULE__{
@@ -70,7 +70,7 @@ defmodule WorkReport.State do
   defp parse_str(state, str) do
     case Parser.parse(str) do
       {:ok, entity} -> %{state | e: entity}
-      {:error, error} -> %{state | e: nil, error: error}
+      {:error, error} -> %{state | error: error}
     end
   end
 

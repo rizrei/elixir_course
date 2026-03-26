@@ -1,4 +1,6 @@
 defmodule WorkReport.Report.DayTest do
+  @moduledoc false
+
   use ExUnit.Case, async: true
 
   alias WorkReport.Report.{Day, Task}
