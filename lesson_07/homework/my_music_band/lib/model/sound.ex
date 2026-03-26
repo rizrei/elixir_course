@@ -27,17 +27,14 @@ defmodule MyMusicBand.Model.Sound do
 
   @spec validate([sound()], list()) :: {:ok, [sound()]} | {:error, [{pos_integer(), sound()}]}
   def validate(sounds, allowed_sounds) do
-    invalid_sounds =
-      sounds
-      |> Stream.with_index(1)
-      |> Stream.map(fn {sound, position} -> {position, sound} end)
-      |> Stream.filter(fn {_, sound} -> sound not in allowed_sounds end)
-      |> Enum.to_list()
-
-    if invalid_sounds == [] do
-      {:ok, sounds}
-    else
-      {:error, invalid_sounds}
-    end
+    sounds
+    |> Stream.with_index(1)
+    |> Stream.map(fn {sound, position} -> {position, sound} end)
+    |> Stream.filter(fn {_, sound} -> sound not in allowed_sounds end)
+    |> Enum.to_list()
+    |> then(fn
+      [] -> {:ok, sounds}
+      [_ | _] = invalid_sounds -> {:error, invalid_sounds}
+    end)
   end
 end
